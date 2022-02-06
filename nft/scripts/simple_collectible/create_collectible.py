@@ -11,7 +11,7 @@ def main():
     print(network.show_active())
     simple_collectible = SimpleCollectible[len(SimpleCollectible) - 1]
     token_id = simple_collectible.tokenCounter()
-    transaction = simple_collectible.createCollectible(sample_token_uri, {"from": dev})
+    transaction = simple_collectible.createCollectible("0x4490095AF743Ac12b24Da2Cd3Ae21E89944CDf2f", sample_token_uri, {"from": dev})
     transaction.wait(1)
     print(
         "Awesome! You can view your NFT at {}".format(
