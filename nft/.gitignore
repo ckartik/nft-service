@@ -1,7 +1,6 @@
 # Brownie
 build
 .pytest_cache
-.env
 .DS*
 
 # Byte-compiled / optimized / DLL files

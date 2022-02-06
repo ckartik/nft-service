@@ -12,8 +12,7 @@ app.config["DEBUG"] = True
 @app.route("/nft_post", methods=['POST', 'GET'])
 def nft_post():
     user_id = flask.request.args['userid']
-
-
+    
 @app.route('/wallet_get', methods=['GET'])
 def wallet_add():
     user_id = flask.request.args['userid']
