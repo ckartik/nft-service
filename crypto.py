@@ -1,10 +1,15 @@
 import flask
-import sqlite3
 import secrets
+import json
+import os
 from eth_account import Account
 from collections import defaultdict
 from web3 import Web3
-from . import compiled
+
+compiled = {}
+with open('nft/build/contracts/SimpleCollectible.json') as f:
+    data = f.read()
+    compiled = json.loads(data)
 # get bytecode
 bytecode = compiled["bytecode"]
 # get abi
