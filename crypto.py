@@ -2,7 +2,6 @@ import flask
 import sqlite3
 import secrets
 from eth_account import Account
-# import eth_account
 
 conn = sqlite3.connect('tmp.db')
 cursor = conn.cursor()
@@ -15,17 +14,17 @@ app.config["DEBUG"] = True
 
 
 
-# @app.route('/wallet_get', methods=['GET'])
-# def wallet_add():
-#     user_id = flask.request.args['userid']
-#     conn = sqlite3.connect('tmp.db')
-#     cursor = conn.cursor()
-#     pkey = cursor.execute("Select PrivateKey from Wallets where UserID = %s limit 1", user_id)
-#     conn.commit()
-#     conn.close()
-#     account = Account.from_key(pkey)
+@app.route('/wallet_get', methods=['GET'])
+def wallet_add():
+    user_id = flask.request.args['userid']
+    conn = sqlite3.connect('tmp.db')
+    cursor = conn.cursor()
+    pkey= cursor.execute('Select PrivateKey from Wallets where UserID = "{}" limit 1'.format(user_id)).fetchone()[0]
+    conn.commit()
+    conn.close()
+    account = Account.from_key(pkey)
 
-#     return flask.jsonify(private_key=pkey, account=account.address)
+    return flask.jsonify(private_key=pkey, account=account.address)
 
 
 @app.route('/wallet', methods=['POST', 'GET'])
@@ -36,7 +35,7 @@ def wallet():
     account = Account.from_key(private_key)
     conn = sqlite3.connect('tmp.db')
     cursor = conn.cursor()
-    cursor.execute("INSERT INTO Wallets (UserID, PrivateKey) VALUES (%s, %s)", user_id, private_key)
+    cursor.execute('INSERT INTO Wallets (UserID, PrivateKey) VALUES ("{}", "{}")'.format(user_id, private_key))
     conn.commit()
     conn.close()
     return flask.jsonify(private_key=private_key, account=account.address)
