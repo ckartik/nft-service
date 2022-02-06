@@ -6,6 +6,7 @@ sample_token_uri = "https://ipfs.io/ipfs/Qmd9MCGtdVz2miNumBHDbvj8bigSgTwnr4SbyH6
 
 
 def main():
+    print(config["wallets"]["from_key"])
     dev = accounts.add(config["wallets"]["from_key"])
     print(network.show_active())
     simple_collectible = SimpleCollectible[len(SimpleCollectible) - 1]

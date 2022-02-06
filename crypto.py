@@ -2,26 +2,23 @@ import flask
 import sqlite3
 import secrets
 from eth_account import Account
+from collections import defaultdict
+# from brownie import accounts, SimpleCollectible
+walletsDB = defaultdict(lambda:"")
 
-conn = sqlite3.connect('tmp.db')
-cursor = conn.cursor()
-cursor.execute('''CREATE TABLE IF NOT EXISTS Wallets
-              (UserID VARCHAR(126), PrivateKey TEXT)''')
-conn.commit()
-conn.close()
 app = flask.Flask(__name__)
 app.config["DEBUG"] = True
 
-
-
+@app.route("/nft_post", methods=['POST', 'GET'])
+def nft_post():
+    user_id = flask.request.args['userid']
+    
 @app.route('/wallet_get', methods=['GET'])
 def wallet_add():
     user_id = flask.request.args['userid']
-    conn = sqlite3.connect('tmp.db')
-    cursor = conn.cursor()
-    pkey= cursor.execute('Select PrivateKey from Wallets where UserID = "{}" limit 1'.format(user_id)).fetchone()[0]
-    conn.commit()
-    conn.close()
+    pkey = walletsDB[user_id]
+    if pkey == "":
+        return flask.jsonify(error="Error: No user id exists.")
     account = Account.from_key(pkey)
 
     return flask.jsonify(private_key=pkey, account=account.address)
@@ -33,11 +30,7 @@ def wallet():
     priv = secrets.token_hex(32)
     private_key = "0x" + priv
     account = Account.from_key(private_key)
-    conn = sqlite3.connect('tmp.db')
-    cursor = conn.cursor()
-    cursor.execute('INSERT INTO Wallets (UserID, PrivateKey) VALUES ("{}", "{}")'.format(user_id, private_key))
-    conn.commit()
-    conn.close()
+    walletsDB[user_id] = private_key
     return flask.jsonify(private_key=private_key, account=account.address)
 
 @app.route('/', methods=['GET'])
