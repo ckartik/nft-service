@@ -14,11 +14,13 @@ with open('nft/build/contracts/SimpleCollectible.json') as f:
 bytecode = compiled["bytecode"]
 # get abi
 abi = compiled["abi"]
-
-w3 = Web3(Web3.HTTPProvider("https://rinkeby.infura.io/v3/068039844ea54f41a84e0e4550a72819"))
+# Web3ProviderURL = "https://rinkeby.infura.io/v3/068039844ea54f41a84e0e4550a72819"
+Web3ProviderURL = "https://polygon-mumbai.infura.io/v3/e6172e38c3c54b2da5e08e238c043c8e"
+w3 = Web3(Web3.HTTPProvider(Web3ProviderURL))
 chain_id = 4
 OPENSEA_FORMAT = "https://testnets.opensea.io/assets/{}/{}"
-contractAddress = "0xECE0b56D4cbCaE1a1225C69fBB6254BAD78945Db"
+# contractAddress = "0xECE0b56D4cbCaE1a1225C69fBB6254BAD78945Db"
+contractAddress = "0xcD639B3920d22303eC2e156611f7784CbA6477F6"
 NFTFactory = w3.eth.contract(address=contractAddress, abi=abi)
 
 sample_token_uri = "https://ipfs.io/ipfs/Qmd9MCGtdVz2miNumBHDbvj8bigSgTwnr4SbyH6DNnpWdt?filename=0-PUG.json"
@@ -33,16 +35,17 @@ app.config["DEBUG"] = True
 
 @app.route("/nft_art", methods=['POST'])
 def craft_nft_art():
+    flask.request.get_json()
     pass
 
 @app.route("/nft_post", methods=['POST', 'GET'])
 def nft_post():
-    user_id = flask.request.args['userid']
+    user_id = flask.request.get_json()['user_id']
     # token_id = NFTFactory.functions.tokenCounter().call()
     # print(token_id)
     pkey = walletsDB[user_id]
     addressOfNewUser = Account.from_key(pkey).address
-    os.system("cd nft; brownie run scripts/simple_collectible/create_collectible.py create {} --network rinkeby".format(addressOfNewUser))
+    os.system("cd nft; brownie run scripts/simple_collectible/create_collectible.py create {} --network polygon-test".format(addressOfNewUser))
     return flask.jsonify(status=200)
     # addressOfUser = Account.from_key(pkey)
     
