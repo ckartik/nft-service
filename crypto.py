@@ -31,6 +31,10 @@ walletsDB = defaultdict(lambda:"")
 app = flask.Flask(__name__)
 app.config["DEBUG"] = True
 
+@app.route("/nft_art", methods=['POST'])
+def craft_nft_art():
+    pass
+
 @app.route("/nft_post", methods=['POST', 'GET'])
 def nft_post():
     user_id = flask.request.args['userid']
@@ -66,20 +70,26 @@ def nft_post():
     #         )
     #     )
     
-@app.route('/wallet_get', methods=['GET'])
-def wallet_add():
-    user_id = flask.request.args['userid']
-    pkey = walletsDB[user_id]
-    if pkey == "":
-        return flask.jsonify(error="Error: No user id exists.")
-    account = Account.from_key(pkey)
+# @app.route('/wallet_get', methods=['GET'])
+# def wallet_add():
+#     user_id = flask.request.args['userid']
+#     pkey = walletsDB[user_id]
+#     if pkey == "":
+#         return flask.jsonify(error="Error: No user id exists.")
+#     account = Account.from_key(pkey)
 
-    return flask.jsonify(private_key=pkey, account=account.address)
+#     return flask.jsonify(private_key=pkey, account=account.address)
 
 
 @app.route('/wallet', methods=['POST', 'GET'])
 def wallet():
-    user_id = flask.request.args['userid']
+    print(flask.request.data)
+    user_id = flask.request.get_json()['user_id']
+    if walletsDB[user_id] != "":
+        pkey = walletsDB[user_id]
+        account = Account.from_key(pkey)
+        return flask.jsonify(private_key=pkey, account=account.address)
+    print("Creating new account/private key for {}".format(user_id))
     priv = secrets.token_hex(32)
     private_key = "0x" + priv
     account = Account.from_key(private_key)
